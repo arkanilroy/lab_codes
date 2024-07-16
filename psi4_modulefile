@@ -1,0 +1,43 @@
+#%Module1.0#####################################################################
+##
+## Psi4 Modulefile
+##
+proc ModulesHelp { } {
+    puts stderr "This module loads Psi4 with conda environment."
+}
+
+module-whatis "Loads Psi4 environment"
+
+# Set environment variables for Psi4
+set psi4root /usr/local/bin/psi4conda
+
+prepend-path PATH $psi4root/bin
+prepend-path LD_LIBRARY_PATH $psi4root/lib
+prepend-path PYTHONPATH $psi4root/lib/python3.9/site-packages
+
+# Set Conda-specific environment variables directly
+setenv CONDA_EXE $psi4root/bin/conda
+setenv _CE_CONDA ""
+setenv _CE_M ""
+setenv CONDA_PYTHON_EXE $psi4root/bin/python
+setenv CONDA_SHLVL 1
+
+# Initialize Conda base environment
+if {[module-info mode load]} {
+    if {[file exists "$psi4root/etc/profile.d/conda.sh"]} {
+        puts stderr "Sourcing conda.sh"
+        set conda_sh "$psi4root/etc/profile.d/conda.sh"
+        catch {eval [exec /bin/sh -c "source $conda_sh && $psi4root/bin/conda shell.bash hook"]}
+        
+        # Manually set the PATH and other variables that conda activate would set
+        set conda_env_prefix "$psi4root/envs/psi4"
+        prepend-path PATH "$conda_env_prefix/bin"
+        prepend-path LD_LIBRARY_PATH "$conda_env_prefix/lib"
+        prepend-path PYTHONPATH "$conda_env_prefix/lib/python3.9/site-packages"
+        setenv CONDA_PREFIX "$conda_env_prefix"
+        setenv CONDA_DEFAULT_ENV "psi4"
+    } else {
+        puts stderr "Error: conda.sh script not found"
+    }
+}
+
