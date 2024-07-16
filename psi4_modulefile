@@ -9,7 +9,7 @@ proc ModulesHelp { } {
 module-whatis "Loads Psi4 environment"
 
 # Set environment variables for Psi4
-set psi4root /usr/local/bin/psi4conda
+set psi4root $Path_to_installation/psi4conda
 
 prepend-path PATH $psi4root/bin
 prepend-path LD_LIBRARY_PATH $psi4root/lib
